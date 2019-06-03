@@ -1,0 +1,129 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet author="Bochao Shao" id="initial_script">
+        <createTable remarks="Store organization basic etc"
+                     tableName="organization">
+            <column name="organization_id" type="bigint" startWith="1000" autoIncrement="1">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="name" type="varchar2(2000)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <createTable remarks="Store user basic information, login etc"
+                     tableName="bcs_user">
+            <column name="bcs_user_id" type="bigint" startWith="1000" autoIncrement="1">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="username" type="varchar2(200)">
+                <constraints nullable="false" />
+            </column>
+            <column name="password" type="varchar2(2000)">
+                <constraints nullable="false" />
+            </column>
+            <column name="unique_identifier" type="varchar2(2000)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <createTable remarks="Store organization staff information"
+                     tableName="staff">
+            <column name="staff_id" type="bigint" startWith="1000" autoIncrement="1">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="bcs_user_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="organization_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="staff"
+                                 baseColumnNames="bcs_user_id" constraintName="staff_user_fk"
+                                 referencedTableName="bcs_user" referencedColumnNames="bcs_user_id" />
+
+        <createTable remarks="Store organization student information"
+                     tableName="student">
+            <column name="student_id" type="bigint" startWith="1000" autoIncrement="1">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="bcs_user_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="organization_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="student"
+                                 baseColumnNames="bcs_user_id" constraintName="student_user_fk"
+                                 referencedTableName="bcs_user" referencedColumnNames="bcs_user_id" />
+
+        <createTable remarks="Store pick up event basic information"
+                     tableName="pickup_event">
+            <column name="pickup_event_id" type="bigint" startWith="1000" autoIncrement="1">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="begin_date" type="timestamp">
+                <constraints nullable="false" />
+            </column>
+            <column name="end_date" type="timestamp" />
+            <column name="head_count_total" type="bigint" />
+            <column name="luggage_count_total" type="bigint" />
+        </createTable>
+
+        <createTable remarks="Store passenger basic information"
+                     tableName="passenger_detail">
+            <column name="passenger_detail_id" type="bigint" startWith="1000" autoIncrement="1">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="passenger_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="flight_carrier" type="varchar2(200)" />
+            <column name="flight_number" type="varchar2(200)" />
+            <column name="arrival_time" type="timestamp" />
+            <column name="arrival_terminal" type="varchar2(200)" />
+            <column name="head_count" type="bigint" />
+            <column name="luggage_count" type="bigint" />
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="passenger_detail"
+                                 baseColumnNames="passenger_id" constraintName="passenger_student_fk"
+                                 referencedTableName="student" referencedColumnNames="student_id" />
+
+        <createTable remarks="Store pick up event arrangement information"
+                     tableName="pickup_event_arrangement">
+            <column name="pickup_event_arrangement_id" type="bigint" startWith="1000" autoIncrement="1">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="driver_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="passenger_id" type="bigint" />
+            <column name="passenger_detail_id" type="bigint" />
+            <column name="pickup_event_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="pickup_event_arrangement"
+                                 baseColumnNames="passenger_id" constraintName="passenger_arrg_student_fk"
+                                 referencedTableName="student" referencedColumnNames="student_id" />
+
+        <addForeignKeyConstraint baseTableName="pickup_event_arrangement"
+                                 baseColumnNames="passenger_detail_id" constraintName="passenger_arrg_detail_fk"
+                                 referencedTableName="passenger_detail" referencedColumnNames="passenger_detail_id" />
+
+        <addForeignKeyConstraint baseTableName="pickup_event_arrangement"
+                                 baseColumnNames="pickup_event_id" constraintName="passenger_arrg_event_fk"
+                                 referencedTableName="pickup_event" referencedColumnNames="pickup_event_id" />
+
+
+    </changeSet>
+</databaseChangeLog>
